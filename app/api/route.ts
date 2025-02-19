@@ -10,6 +10,7 @@ export interface Release {
     title: string;
     type: string;
     version: string;
+    date: string; // Ajout de la date
 }
 
 async function loadHistory(): Promise<{ releases: Release[] }> {
@@ -22,11 +23,19 @@ async function loadHistory(): Promise<{ releases: Release[] }> {
 }
 
 async function fetchWordPressReleases(): Promise<Release[]> {
-    return [];
     try {
         const parser = new Parser();
         const feed = await parser.parseURL(WORDPRESS_RSS_FEED);
-        return feed.items.map((item) => ({ title: 'Wordpress', type: 'release', version: item.title ?? '' }));
+        const today = new Date().toISOString().split('T')[0]; // Date au format YYYY-MM-DD
+        return feed.items.map((item) => {
+            const versionMatch = item.title?.match(/WordPress (.*)/);
+            let version = versionMatch ? versionMatch[1] : 'unknown';
+            version = version.replace('Wordpress', '');
+            version = version.replace('Maintenance Release', '');
+            version = version.replace('Release Candidate', 'RC');
+            version = version.trim();
+            return { title: 'Wordpress', type: 'release', version, date: today };
+        });
     } catch (error) {
         console.error("Erreur lors de la récupération des versions WordPress:", error);
         return [];
@@ -36,9 +45,10 @@ async function fetchWordPressReleases(): Promise<Release[]> {
 async function fetchLatestReleases(): Promise<Release[]> {
     const releases: Release[] = [];
     const GITHUB_REPOS = [
-        { owner: "facebook", repo: "react" },
-        { owner: "vercel", repo: "next.js" },
+        { owner: "go-gitea", repo: "gitea" },
     ];
+
+    const today = new Date().toISOString().split('T')[0]; // Date au format YYYY-MM-DD
 
     for (const { owner, repo } of GITHUB_REPOS) {
         try {
@@ -46,7 +56,7 @@ async function fetchLatestReleases(): Promise<Release[]> {
             const response = await axios.get(url, {
                 headers: { "User-Agent": "Node.js" },
             });
-            releases.push({ title: repo, type: "release", version: response.data.tag_name });
+            releases.push({ title: repo, type: "release", version: response.data.tag_name, date: today });
         } catch (error) {
             console.error(`Erreur lors de la récupération de ${repo}:`, error);
         }
@@ -63,7 +73,10 @@ export async function GET() {
 
     history.releases = [...history.releases, ...newReleases, ...newWpReleases];
 
-    // await fs.writeFile(HISTORY_FILE, JSON.stringify(history, null, 2));
+    await fs.writeFile(HISTORY_FILE, JSON.stringify(history, null, 2));
 
-    return NextResponse.json({ releases: [...newReleases, ...newWpReleases] });
+    const today = new Date().toISOString().split('T')[0]; // Date au format YYYY-MM-DD
+    const todayReleases = history.releases.filter((release) => release.date === today);
+
+    return NextResponse.json({ releases: todayReleases });
 }

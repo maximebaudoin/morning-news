@@ -5,51 +5,50 @@ import { Release } from "../api/route";
 
 export default function Page() {
 	const [updates, setUpdates] = useState<Release[]>([]);
+    const [currentDate, setCurrentDate] = useState<string>("");
 
 	useEffect(() => {
 		fetch("/api")
 			.then((res) => res.json())
 			.then((data) => setUpdates(data.releases))
 			.catch((err) => console.error("Erreur de chargement:", err));
-	}, []);
 
-    console.log(updates);
-    
+            const today = new Date();
+            const options: Intl.DateTimeFormatOptions = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+            const formattedDate = today.toLocaleDateString('fr-FR', options)
+            setCurrentDate(formattedDate.replace(',', '').replace('.', ''));
+        }, []);
 
 	return (
-		<div style={{ fontFamily: "Arial, sans-serif" }}>
-			<header style={{ textAlign: "center", padding: "10px", background: "#f4f4f4" }}>
-				<h1>Dernières Mises à Jour</h1>
+		<div style={{ }}>
+			<header style={{ textAlign: "center" }}>
+				<h1>Morning News</h1>
+                <h4>{currentDate}</h4>
 			</header>
-			<table style={{ width: "100%", borderCollapse: "collapse", marginTop: "20px" }}>
-				<thead>
-					<tr>
-						<th style={{ border: "1px solid #ddd", padding: "8px", background: "#0073e6", color: "white" }}>Projet</th>
-						<th style={{ border: "1px solid #ddd", padding: "8px", background: "#0073e6", color: "white" }}>Type</th>
-						<th style={{ border: "1px solid #ddd", padding: "8px", background: "#0073e6", color: "white" }}>Version</th>
-					</tr>
-				</thead>
-				<tbody>
-					{updates.map((update, index) => (
-						<>
-							<tr key={`row-${index}`}>
-								<td style={{ border: "1px solid #ddd", padding: "8px" }}>
+            <hr style={{ margin: '20px 0', borderStyle: 'solid', borderBottom: 'none' }} />
+            <div>
+                {updates.map((update, index) => (
+                    <div key={index} style={{ margin: '10px 0 20px 0', textAlign: 'center' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <b>
+                                <u>
                                     {update.title}
-								</td>
-								<td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                                </u>
+                            </b>
+                            <i style={{ marginLeft: 'auto' }}>
+                                <small>
                                     {update.type}
-                                </td>
-								<td colSpan={2} style={{ border: "1px solid #ddd", padding: "8px", background: "#f9f9f9" }}>
-									{update.version}
-								</td>
-							</tr>
-						</>
-					))}
-				</tbody>
-			</table>
-			<footer style={{ textAlign: "center", padding: "10px", background: "#f4f4f4" }}>
-				<p>Généré automatiquement</p>
-			</footer>
+                                </small>
+                            </i>
+                        </div>
+                        <small style={{ textAlign: 'center' }}>
+                            {update.version}
+                        </small>
+                        <hr style={{ width: 50, margin: '20px auto', borderStyle: 'dashed', borderBottom: 'none' }} />
+                    </div>
+                ))}
+            </div>
+            <hr style={{ margin: '20px 0 0 0', borderStyle: 'solid', borderBottom: 'none' }} />
 		</div>
 	);
 }

@@ -73,7 +73,7 @@ export async function GET() {
 
     history.releases = [...history.releases, ...newReleases, ...newWpReleases];
 
-    await fs.writeFile(HISTORY_FILE, JSON.stringify(history, null, 2));
+    // await fs.writeFile(HISTORY_FILE, JSON.stringify(history, null, 2));
 
     const today = new Date().toISOString().split('T')[0]; // Date au format YYYY-MM-DD
     const todayReleases = history.releases.filter((release) => release.date === today);

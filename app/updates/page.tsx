@@ -17,7 +17,7 @@ export default function Page() {
     
 
 	return (
-		<div style={{ fontFamily: "Arial, sans-serif", margin: "40px" }}>
+		<div style={{ fontFamily: "Arial, sans-serif" }}>
 			<header style={{ textAlign: "center", padding: "10px", background: "#f4f4f4" }}>
 				<h1>Dernières Mises à Jour</h1>
 			</header>

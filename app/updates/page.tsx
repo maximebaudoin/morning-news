@@ -25,7 +25,7 @@ export default function Page() {
 				<h1>Morning News</h1>
                 <h4>{currentDate}</h4>
 			</header>
-            <hr style={{ margin: '20px 0', borderStyle: 'solid', borderBottom: 'none' }} />
+            <hr style={{ margin: '20px 0', borderStyle: 'solid', borderWidth: 2, borderBottom: 'none' }} />
             <div>
                 {updates.map((update, index) => (
                     <div key={index} style={{ margin: '10px 0 20px 0', textAlign: 'center' }}>
@@ -36,19 +36,17 @@ export default function Page() {
                                 </u>
                             </b>
                             <i style={{ marginLeft: 'auto' }}>
-                                <small>
-                                    {update.type}
-                                </small>
+                                {update.type}
                             </i>
                         </div>
-                        <small style={{ textAlign: 'center' }}>
+                        <b style={{ textAlign: 'center' }}>
                             {update.version}
-                        </small>
-                        <hr style={{ width: 50, margin: '20px auto', borderStyle: 'dashed', borderBottom: 'none' }} />
+                        </b>
+                        <hr style={{ width: 50, margin: '20px auto', borderStyle: 'dashed', borderWidth: 2, borderBottom: 'none' }} />
                     </div>
                 ))}
             </div>
-            <hr style={{ margin: '20px 0 0 0', borderStyle: 'solid', borderBottom: 'none' }} />
+            <hr style={{ margin: '20px 0 0 0', borderStyle: 'solid', borderWidth: 2, borderBottom: 'none' }} />
 		</div>
 	);
 }

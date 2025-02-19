@@ -22,6 +22,7 @@ async function loadHistory(): Promise<{ releases: Release[] }> {
 }
 
 async function fetchWordPressReleases(): Promise<Release[]> {
+    return [];
     try {
         const parser = new Parser();
         const feed = await parser.parseURL(WORDPRESS_RSS_FEED);
